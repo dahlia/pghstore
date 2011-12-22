@@ -1,6 +1,6 @@
 
 .. automodule:: pghstore
-   :members:
+   :members: dumps, loads, dump, load, PAIR_RE, parse, ESCAPE_RE, unescape
 
 
 Open source
