@@ -51,51 +51,63 @@ def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
           return_unicode=False):
     r"""Converts a mapping object as PostgreSQL ``hstore`` format.
 
-        >>> dumps({u'a': u'1'})
-        '"a"=>"1"'
-        >>> dumps([('key', 'value'), ('k', 'v')])
-        '"key"=>"value","k"=>"v"'
+    .. sourcecode:: pycon
+
+       >>> dumps({u'a': u'1'})
+       '"a"=>"1"'
+       >>> dumps([('key', 'value'), ('k', 'v')])
+       '"key"=>"value","k"=>"v"'
 
     It accepts only strings as keys and values.  Otherwise it will raise
     :exc:`TypeError`:
 
-        >>> dumps([('a', 1), ('b', 2)])
-        Traceback (most recent call last):
-          ...
-        TypeError: value 1 of key 'a' is not a string
+    .. sourcecode:: pycon
+
+       >>> dumps([('a', 1), ('b', 2)])
+       Traceback (most recent call last):
+         ...
+       TypeError: value 1 of key 'a' is not a string
 
     Or you can pass ``key_map`` and ``value_map`` parameters to workaround
     this:
 
-        >>> dumps([('a', 1), ('b', 2)], value_map=str)
-        '"a"=>"1","b"=>"2"'
+    .. sourcecode:: pycon
+
+       >>> dumps([('a', 1), ('b', 2)], value_map=str)
+       '"a"=>"1","b"=>"2"'
 
     By applying these options, you can store any other Python objects
     than strings into ``hstore`` values:
 
-        >>> try:
-        ...    import json
-        ... except ImportError:
-        ...    import simplejson as json
-        >>> dumps([('a', range(3)), ('b', 2)], value_map=json.dumps)
-        '"a"=>"[0, 1, 2]","b"=>"2"'
-        >>> import pickle
-        >>> dumps([('a', range(3)), ('b', 2)],
-        ...       value_map=pickle.dumps)  # doctest: +ELLIPSIS
-        '"a"=>"...","b"=>"..."'
+    .. sourcecode:: pycon
+
+       >>> try:
+       ...    import json
+       ... except ImportError:
+       ...    import simplejson as json
+       >>> dumps([('a', range(3)), ('b', 2)], value_map=json.dumps)
+       '"a"=>"[0, 1, 2]","b"=>"2"'
+       >>> import pickle
+       >>> dumps([('a', range(3)), ('b', 2)],
+       ...       value_map=pickle.dumps)  # doctest: +ELLIPSIS
+       '"a"=>"...","b"=>"..."'
 
     It returns a UTF-8 encoded string, but you can change the ``encoding``:
 
-        >>> dumps({'surname': u'\ud64d'})
-        '"surname"=>"\xed\x99\x8d"'
-        >>> dumps({'surname': u'\ud64d'}, encoding='utf-32')
-        '"surname"=>"\xff\xfe\x00\x00M\xd6\x00\x00"'
+    .. sourcecode:: pycon
+
+       >>> dumps({'surname': u'\ud64d'})
+       '"surname"=>"\xed\x99\x8d"'
+       >>> dumps({'surname': u'\ud64d'}, encoding='utf-32')
+       '"surname"=>"\xff\xfe\x00\x00M\xd6\x00\x00"'
 
     If you set ``return_unicode`` to ``True``, it will return :class:`unicode`
     instead of :class:`str` (byte string):
 
-        >>> dumps({'surname': u'\ud64d'}, return_unicode=True)
-        u'"surname"=>"\ud64d"'
+    .. sourcecode:: pycon
+
+       >>> dumps({'surname': u'\ud64d'}, return_unicode=True)
+       u'"surname"=>"\ud64d"'
 
     :param obj: a mapping object to dump
     :param key_map: an optional mapping function that takes a non-string key
@@ -120,13 +132,15 @@ def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
 
 def dump(obj, file, key_map=None, value_map=None, encoding='utf-8'):
     """Similar to :func:`dumps()` except it writes the result into the passed
-    ``file`` object.
+    ``file`` object instead of returning it.
 
-        >>> import StringIO
-        >>> f = StringIO.StringIO()
-        >>> dump({u'a': u'1'}, f)
-        >>> f.getvalue()
-        '"a"=>"1"'
+    .. sourcecode:: pycon
+
+       >>> import StringIO
+       >>> f = StringIO.StringIO()
+       >>> dump({u'a': u'1'}, f)
+       >>> f.getvalue()
+       '"a"=>"1"'
 
     :param obj: a mapping object to dump
     :param file: a file object to write into
