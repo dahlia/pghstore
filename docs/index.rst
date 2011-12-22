@@ -14,7 +14,7 @@ You can find the source code from the `GitHub repository
 
 .. sourcecode:: console
 
-   $ git clone https://github.com/StyleShare/pghstore
+   $ git clone git://github.com/StyleShare/pghstore.git
 
 To report bugs or request features use the `issue tracker
 <https://github.com/StyleShare/pghstore/issues>`_.
