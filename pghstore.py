@@ -22,7 +22,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This small module implements a formatter and a loader for hstore_,
-one of PostgreSQL_ supplied modules, that stores a simple key-value pairs.
+one of PostgreSQL_ supplied modules, that stores simple key-value pairs.
 
 .. sourcecode:: pycon
 
