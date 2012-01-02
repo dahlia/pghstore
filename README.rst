@@ -26,3 +26,22 @@ http://styleshare.github.com/pghstore/
 .. _PostgreSQL: http://www.postgresql.org/
 .. _PyPI: http://pypi.python.org/pypi/pghstore
 
+
+Changelog
+---------
+
+Version 0.9.1
+'''''''''''''
+
+Released on January 2, 2012.
+
+- Now it is aware of ``NULL`` values.  ``NULL`` values become ``None`` in
+  Python and vice versa.
+
+Version 0.9.0
+'''''''''''''
+
+Released on December 22, 2011.
+
+- Initial version.
+

@@ -1,4 +1,4 @@
-# Copyright (C) 2011 by Hong Minhee <http://dahlia.kr/>,
+# Copyright (C) 2012 by Hong Minhee <http://dahlia.kr/>,
 #                       StyleShare <https://stylesha.re/>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -54,7 +54,7 @@ except ImportError:
 
 
 __all__ = 'dumps', 'loads', 'dump', 'load'
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 
 
 def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
@@ -68,11 +68,13 @@ def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
        >>> dumps([('key', 'value'), ('k', 'v')])
        '"key"=>"value","k"=>"v"'
 
-    It accepts only strings as keys and values.  Otherwise it will raise
-    :exc:`TypeError`:
+    It accepts only strings as keys and values except ``None`` for values.
+    Otherwise it will raise :exc:`TypeError`:
 
     .. sourcecode:: pycon
 
+       >>> dumps({'null': None})
+       '"null"=>NULL'
        >>> dumps([('a', 1), ('b', 2)])
        Traceback (most recent call last):
          ...
@@ -218,7 +220,9 @@ def dump(obj, file, key_map=None, value_map=None, encoding='utf-8'):
             key = key_map(key)
         elif not isinstance(key, str):
             key = key.encode(encoding)
-        if not isinstance(value, basestring):
+        if value is None:
+            value = None
+        elif not isinstance(value, basestring):
             if value_map is None:
                 raise TypeError('value %r of key %r is not a string' %
                                 (value, key))
@@ -231,9 +235,12 @@ def dump(obj, file, key_map=None, value_map=None, encoding='utf-8'):
         else:
             write(',"')
         write(escape_re.sub(r'\\\1', key))
-        write('"=>"')
-        write(escape_re.sub(r'\\\1', value))
-        write('"')
+        if value is None:
+            write('"=>NULL')
+        else:
+            write('"=>"')
+            write(escape_re.sub(r'\\\1', value))
+            write('"')
 
 
 def load(file, encoding='utf-8'):
@@ -262,7 +269,8 @@ def load(file, encoding='utf-8'):
 #: ``kq``
 #:    Bare value string.
 PAIR_RE = re.compile(r'(?:"(?P<kq>(?:[^\\"]|\\.)*)"|(?P<kb>\S+?))\s*=>\s*'
-                     r'(?:"(?P<vq>(?:[^\\"]|\\.)*)"|(?P<vb>[^,]+))(?:,|$)')
+                     r'(?:"(?P<vq>(?:[^\\"]|\\.)*)"|(?P<vn>NULL)|'
+                     r'(?P<vb>[^,]+))(?:,|$)', re.IGNORECASE)
 
 
 def parse(string, encoding='utf-8'):
@@ -272,8 +280,8 @@ def parse(string, encoding='utf-8'):
 
     .. sourcecode:: pycon
 
-       >>> list(parse('a=>1, b => 2'))
-       [(u'a', u'1'), (u'b', u'2')]
+       >>> list(parse('a=>1, b => 2, c => null, d => "NULL"'))
+       [(u'a', u'1'), (u'b', u'2'), (u'c', None), (u'd', u'NULL')]
        >>> list(parse(r'"a=>1"=>"\"b\"=>2",'))
        [(u'a=>1', u'"b"=>2')]
 
@@ -293,7 +301,8 @@ def parse(string, encoding='utf-8'):
         if vq:
             value = unescape(vq)
         else:
-            value = match.group('vb')
+            vn = match.group('vn')
+            value = None if vn else match.group('vb')
         if isinstance(value, str):
             value = value.decode(encoding)
         yield key, value
