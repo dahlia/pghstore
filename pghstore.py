@@ -1,16 +1,16 @@
 # Copyright (C) 2012 by Hong Minhee <http://dahlia.kr/>,
 #                       StyleShare <https://stylesha.re/>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -63,8 +63,8 @@ def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
 
     .. sourcecode:: pycon
 
-       >>> dumps({u'a': u'1'})
-       '"a"=>"1"'
+       >>> dumps({u'a': u'1 "quotes"'})
+       '"a"=>"1 \\"quotes\\""'
        >>> dumps([('key', 'value'), ('k', 'v')])
        '"key"=>"value","k"=>"v"'
 
@@ -213,7 +213,6 @@ def dump(obj, file, key_map=None, value_map=None, encoding='utf-8'):
     if not callable(write):
         raise TypeError('file must be a wrtiable file object that implements '
                         'write() method')
-    escape_re = re.compile(r'[\\"]')
     first = True
     for key, value in items:
         if not isinstance(key, basestring):
@@ -234,12 +233,12 @@ def dump(obj, file, key_map=None, value_map=None, encoding='utf-8'):
             first = False
         else:
             write(',"')
-        write(escape_re.sub(r'\\\1', key))
+        write(escape(key))
         if value is None:
             write('"=>NULL')
         else:
             write('"=>"')
-            write(escape_re.sub(r'\\\1', value))
+            write(escape(value))
             write('"')
 
 
@@ -328,3 +327,18 @@ def unescape(s):
     """
     return ESCAPE_RE.sub(r'\1', s)
 
+
+def escape(s):
+    r"""Escapes quotes and backslashes for use in hstore strings.
+
+    .. sourcecode:: pycon
+
+       >>> escape('string with "quotes"')
+       'string with \\"quotes\\"'
+    """
+    return s.replace('\\', '\\\\').replace('"', '\\"')
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
