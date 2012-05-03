@@ -30,6 +30,16 @@ http://styleshare.github.com/pghstore/
 Changelog
 ---------
 
+Version 0.9.2
+'''''''''''''
+
+Released on May 3, 2012.
+
+- Fixed escaping of quotes and backslshes. Patched by Dan Watson (`#2`__).
+
+__ https://github.com/StyleShare/pghstore/pull/2
+
+
 Version 0.9.1
 '''''''''''''
 

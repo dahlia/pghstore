@@ -54,7 +54,7 @@ except ImportError:
 
 
 __all__ = 'dumps', 'loads', 'dump', 'load'
-__version__ = '0.9.1'
+__version__ = '0.9.2'
 
 
 def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
