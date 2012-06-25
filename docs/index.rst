@@ -6,18 +6,20 @@
 Open source
 ===========
 
-This module is written by `Hong Minhee <http://dahlia.kr/>`_ for StyleShare_
-and distributed under `MIT License <http://styleshare.mit-license.org/>`_.
+This module is initially written by `Hong Minhee <http://dahlia.kr/>`_
+(original Python version) and `Robert Kajic <http://github.com/kajic>`_
+(optimized C version).
+
+Distributed under `MIT License <http://minhee.mit-license.org/>`_.
 
 You can find the source code from the `GitHub repository
-<https://github.com/StyleShare/pghstore>`_:
+<https://github.com/dahlia/pghstore>`_:
 
 .. sourcecode:: console
 
-   $ git clone git://github.com/StyleShare/pghstore.git
+   $ git clone git://github.com/dahlia/pghstore.git
 
 To report bugs or request features use the `issue tracker
-<https://github.com/StyleShare/pghstore/issues>`_.
+<https://github.com/dahlia/pghstore/issues>`_.
 
-.. _StyleShare: https://stylesha.re/
 

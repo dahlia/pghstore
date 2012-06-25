@@ -1,13 +1,14 @@
 try:
-    from setuptools import setup
+    from setuptools import setup, Extension
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, Extension
 import distutils.cmd
-import sys
-import tempfile
 import os
 import os.path
 import shutil
+import sys
+import tempfile
+
 import pghstore
 
 
@@ -41,7 +42,7 @@ class upload_doc(distutils.cmd.Command):
         build = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'build', 'sphinx', 'html')
         os.chdir(path)
-        os.system('git clone git@github.com:StyleShare/pghstore.git .')
+        os.system('git clone git@github.com:dahlia/pghstore.git .')
         os.system('git checkout gh-pages')
         os.system('git rm -r .')
         os.system('touch .nojekyll')
@@ -52,19 +53,26 @@ class upload_doc(distutils.cmd.Command):
         shutil.rmtree(path)
 
 
+cpghstore = Extension(
+    'cpghstore', sources=['cpghstore.c'], extra_compile_args=['-O3']
+)
+
+
 setup(name='pghstore',
-      py_modules=['pghstore'],
+      py_modules=['pghstore', '_pghstore'],
+      ext_modules=[cpghstore],
       version=pghstore.__version__,
       description='PostgreSQL hstore formatter',
       long_description=long_description,
       license='MIT License',
       author='Hong Minhee',
-      author_email='dahlia' '@' 'stylesha.re',
-      maintainer='StyleShare',
-      maintainer_email='dev' '@' 'stylesha.re',
-      url='http://styleshare.github.com/pghstore/',
+      author_email='minhee' '@' 'dahlia.kr',
+      maintainer='Robert Kajic',
+      maintainer_email='robert' '@' 'kajic.com',
+      url='https://github.com/dahlia/pghstore',
       test_suite='pghstoretests.tests',
       tests_require=tests_require,
+      platforms=['any'],
       cmdclass={'upload_doc': upload_doc},
       classifiers=[
         'Development Status :: 4 - Beta',
@@ -77,5 +85,8 @@ setup(name='pghstore',
         'Programming Language :: Python :: 2 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
-        'Programming Language :: Python :: Implementation :: Stackless'
+        'Programming Language :: Python :: Implementation :: Stackless',
+        'Topic :: Database',
+        'Topic :: Software Development :: Libraries :: Python Modules'
       ])
+

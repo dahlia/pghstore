@@ -1,5 +1,6 @@
 dist/
 build/
+cpghstore.so
 docs/_build/
 .tox/
 *.egg-info/

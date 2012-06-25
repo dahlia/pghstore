@@ -20,7 +20,7 @@ You can easily install the package from PyPI_ by using ``pip`` or
 
 Visit the website to read its documentation:
 
-http://styleshare.github.com/pghstore/
+http://dahlia.github.com/pghstore/
 
 .. _hstore: http://www.postgresql.org/docs/9.1/static/hstore.html
 .. _PostgreSQL: http://www.postgresql.org/

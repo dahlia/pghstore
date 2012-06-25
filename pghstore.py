@@ -1,5 +1,4 @@
 # Copyright (C) 2012 by Hong Minhee <http://dahlia.kr/>,
-#                       StyleShare <https://stylesha.re/>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
