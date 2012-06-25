@@ -1,15 +1,16 @@
-try:
-    from setuptools import setup, Extension
-except ImportError:
-    from distutils.core import setup, Extension
-import distutils.cmd
+from distutils.cmd import Command
+from distutils.command.build_ext import build_ext
+from distutils.errors import (CCompilerError, DistutilsExecError,
+                              DistutilsPlatformError)
 import os
 import os.path
 import shutil
 import sys
 import tempfile
 
-import pghstore
+from setuptools import Extension, Feature, setup
+
+from pghstore.version import VERSION
 
 
 try:
@@ -25,7 +26,7 @@ else:
     tests_require = None
 
 
-class upload_doc(distutils.cmd.Command):
+class upload_doc(Command):
     """Uploads the documentation to GitHub pages."""
 
     description = __doc__
@@ -53,40 +54,114 @@ class upload_doc(distutils.cmd.Command):
         shutil.rmtree(path)
 
 
-cpghstore = Extension(
-    'cpghstore', sources=['cpghstore.c'], extra_compile_args=['-O3']
+# Most of the following codes to allow C extension building to fail were
+# copied from MarkupSafe's setup.py script.
+# https://github.com/mitsuhiko/markupsafe/blob/master/setup.py
+
+is_jython = 'java' in sys.platform
+is_pypy = hasattr(sys, 'pypy_version_info')
+
+
+speedups = Feature(
+    'optional C speed-enhancement module',
+    standard=True,
+    available=not (is_jython or is_pypy),
+    ext_modules=[
+        Extension('pghstore._speedups', ['pghstore/_speedups.c'],
+                  extra_compile_args=['-O3'])
+    ]
 )
 
 
-setup(name='pghstore',
-      py_modules=['pghstore', '_pghstore'],
-      ext_modules=[cpghstore],
-      version=pghstore.__version__,
-      description='PostgreSQL hstore formatter',
-      long_description=long_description,
-      license='MIT License',
-      author='Hong Minhee',
-      author_email='minhee' '@' 'dahlia.kr',
-      maintainer='Robert Kajic',
-      maintainer_email='robert' '@' 'kajic.com',
-      url='https://github.com/dahlia/pghstore',
-      test_suite='pghstoretests.tests',
-      tests_require=tests_require,
-      platforms=['any'],
-      cmdclass={'upload_doc': upload_doc},
-      classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.5',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 2 :: Only',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
-        'Programming Language :: Python :: Implementation :: Stackless',
-        'Topic :: Database',
-        'Topic :: Software Development :: Libraries :: Python Modules'
-      ])
+ext_errors = CCompilerError, DistutilsExecError, DistutilsPlatformError
+if sys.platform == 'win32' and sys.version_info > (2, 6):
+    # 2.6's distutils.msvc9compiler can raise an IOError when failing to
+    # find the compiler
+    ext_errors += (IOError,)
+
+
+class BuildFailed(Exception):
+
+    pass
+
+
+class ve_build_ext(build_ext):
+    """This class allows C extension building to fail."""
+
+    def run(self):
+        try:
+            build_ext.run(self)
+        except DistutilsPlatformError:
+            raise BuildFailed()
+
+    def build_extension(self, ext):
+        try:
+            build_ext.build_extension(self, ext)
+        except ext_errors:
+            raise BuildFailed()
+        except ValueError:
+            # this can happen on Windows 64 bit, see Python issue 7511
+            if "'path'" in str(sys.exc_info()[1]): # works with Python 2 and 3
+                raise BuildFailed()
+            raise
+
+
+def run_setup(with_speedups):
+    setup(
+        name='pghstore',
+        packages=['pghstore'],
+        features={'speedups': speedups} if with_speedups else {},
+        version=VERSION,
+        description='PostgreSQL hstore formatter',
+        long_description=long_description,
+        license='MIT License',
+        author='Hong Minhee',
+        author_email='minhee' '@' 'dahlia.kr',
+        maintainer='Robert Kajic',
+        maintainer_email='robert' '@' 'kajic.com',
+        url='https://github.com/dahlia/pghstore',
+        test_suite='pghstoretests.tests',
+        tests_require=tests_require,
+        platforms=['any'],
+        cmdclass={
+            'build_ext': ve_build_ext,
+            'upload_doc': upload_doc
+        },
+        classifiers=[
+            'Development Status :: 4 - Beta',
+            'Intended Audience :: Developers',
+            'License :: OSI Approved :: MIT License',
+            'Operating System :: OS Independent',
+            'Programming Language :: Python :: 2.5',
+            'Programming Language :: Python :: 2.6',
+            'Programming Language :: Python :: 2.7',
+            'Programming Language :: Python :: 2 :: Only',
+            'Programming Language :: Python :: Implementation :: CPython',
+            'Programming Language :: Python :: Implementation :: PyPy',
+            'Programming Language :: Python :: Implementation :: Stackless',
+            'Topic :: Database',
+            'Topic :: Software Development :: Libraries :: Python Modules'
+        ]
+    )
+
+
+def try_building_extension():
+    try:
+        run_setup(True)
+    except BuildFailed:
+        print '=' * 74
+        print 'WARNING: The C extension could not be compiled,',
+        print 'speedups are not enabled.'
+        print 'Failure information, if any, is above.'
+        print 'Retrying the build without the C extension now.'
+        print
+        run_setup(False)
+        print '=' * 74
+        print 'WARNING: The C extension could not be compiled,',
+        print 'speedups are not enabled.'
+        print 'Plain-Python installation succeeded.'
+        print '=' * 74
+
+
+try_building_extension()
 

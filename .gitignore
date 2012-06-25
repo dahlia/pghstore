@@ -1,7 +1,7 @@
 dist/
 build/
-cpghstore.so
 docs/_build/
+pghstore/_speedups.so
 .tox/
 *.egg-info/
 *.pyc

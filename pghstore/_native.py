@@ -1,59 +1,8 @@
-# Copyright (C) 2012 by Hong Minhee <http://dahlia.kr/>,
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-""":mod:`pghstore` --- PostgreSQL hstore formatter
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This small module implements a formatter and a loader for hstore_,
-one of PostgreSQL_ supplied modules, that stores simple key-value pairs.
-
-.. sourcecode:: pycon
-
-   >>> dumps({u'a': u'1'})
-   '"a"=>"1"'
-   >>> loads('"a"=>"1"')
-   {u'a': u'1'}
-   >>> src = [('pgsql', 'mysql'), ('python', 'php'), ('gevent', 'nodejs')]
-   >>> loads(dumps(src), return_type=list)
-   [(u'pgsql', u'mysql'), (u'python', u'php'), (u'gevent', u'nodejs')]
-
-You can easily install the package from PyPI_ by using :program:`pip` or
-:program:`easy_install`:
-
-.. sourcecode:: console
-
-   $ pip install pghstore
-
-.. _hstore: http://www.postgresql.org/docs/9.1/static/hstore.html
-.. _PostgreSQL: http://www.postgresql.org/
-.. _PyPI: http://pypi.python.org/pypi/pghstore
-
-"""
 import re
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
-
-
-__all__ = 'dumps', 'loads', 'dump', 'load'
-__version__ = '0.9.2'
 
 
 def dumps(obj, key_map=None, value_map=None, encoding='utf-8',
@@ -337,7 +286,3 @@ def escape(s):
     """
     return s.replace('\\', '\\\\').replace('"', '\\"')
 
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

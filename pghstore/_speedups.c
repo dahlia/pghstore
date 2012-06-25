@@ -1,23 +1,3 @@
-/* Copyright (C) 2012 by Robert Kajic <http://github.com/kajic>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
 #include <Python.h>
 #include <stdio.h>
 #include <string.h>
@@ -31,8 +11,6 @@ THE SOFTWARE.
   }
 
 #define isEven(a) (((a) & 1) == 0)
-
-static PyObject *CPgHstoreError;
 
 /*
  * Just like strchr, but find first -unescaped- occurrence of c in s.
@@ -53,7 +31,7 @@ strchr_unescaped(char *s, char c)
 }
 
 static PyObject *
-cpghstore_loads(PyObject *self, PyObject *args)
+_speedups_loads(PyObject *self, PyObject *args)
 {
   char *s;
   int i, j, null_value = 0;
@@ -127,7 +105,7 @@ cpghstore_loads(PyObject *self, PyObject *args)
 #define CITATION "\""
 
 static PyObject *
-cpghstore_dumps(PyObject *self, PyObject *args)
+_speedups_dumps(PyObject *self, PyObject *args)
 {
   int i = 0;
   PyObject *d, *list;
@@ -197,25 +175,21 @@ cpghstore_dumps(PyObject *self, PyObject *args)
 
 
 static PyMethodDef CPgHstoreMethods[] = {
-    {"loads",  cpghstore_loads, METH_VARARGS,
+    {"loads",  _speedups_loads, METH_VARARGS,
      "Parse (decode) a postgres hstore string into a dict."},
-    {"dumps",  cpghstore_dumps, METH_VARARGS,
+    {"dumps",  _speedups_dumps, METH_VARARGS,
      "Dump (encode) a dict into a postgres hstore string."},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 PyMODINIT_FUNC
-initcpghstore(void)
+init_speedups(void)
 {
     PyObject *m;
 
-    m = Py_InitModule("cpghstore", CPgHstoreMethods);
+    m = Py_InitModule("pghstore._speedups", CPgHstoreMethods);
     if (m == NULL)
         return;
-
-    CPgHstoreError = PyErr_NewException("cpghstore.CPgHstoreError", NULL, NULL);
-    Py_INCREF(CPgHstoreError);
-    PyModule_AddObject(m, "cpghstore.CPgHstoreError", CPgHstoreError);
 }
 
 int
@@ -228,7 +202,7 @@ main(int argc, char *argv[])
     Py_Initialize();
 
     /* Add a static module */
-    initcpghstore();
+    init_speedups();
 
     return 0;
 }

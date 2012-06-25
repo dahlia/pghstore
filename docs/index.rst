@@ -1,14 +1,18 @@
 
 .. automodule:: pghstore
-   :members: dumps, loads, dump, load, PAIR_RE, parse, ESCAPE_RE, unescape
+   :members:
+
+.. automodule:: pghstore.version
+   :members:
 
 
 Open source
 ===========
 
 This module is initially written by `Hong Minhee <http://dahlia.kr/>`_
-(original Python version) and `Robert Kajic <http://github.com/kajic>`_
-(optimized C version).
+(:mod:`pghstore._native` --- original Python version) and
+`Robert Kajic <http://github.com/kajic>`_ (:mod:`pghstore._speedups` ---
+optimized C version).
 
 Distributed under `MIT License <http://minhee.mit-license.org/>`_.
 
