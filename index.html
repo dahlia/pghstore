@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pghstore — PostgreSQL hstore formatter &mdash; pghstore 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pghstore 1.0.0 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">pghstore 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <span class="target" id="module-pghstore"></span><div class="section" id="pghstore-postgresql-hstore-formatter">
+<h1><a class="reference internal" href="#module-pghstore" title="pghstore"><tt class="xref py py-mod docutils literal"><span class="pre">pghstore</span></tt></a> &#8212; PostgreSQL hstore formatter<a class="headerlink" href="#pghstore-postgresql-hstore-formatter" title="Permalink to this headline">¶</a></h1>
+<p>This small module implements a formatter and a loader for <a class="reference external" href="http://www.postgresql.org/docs/9.1/static/hstore.html">hstore</a>,
+one of <a class="reference external" href="http://www.postgresql.org/">PostgreSQL</a> supplied modules, that stores simple key-value pairs.</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">({</span><span class="s">u&#39;a&#39;</span><span class="p">:</span> <span class="s">u&#39;1&#39;</span><span class="p">})</span>
+<span class="go">&#39;&quot;a&quot;=&gt;&quot;1&quot;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loads</span><span class="p">(</span><span class="s">&#39;&quot;a&quot;=&gt;&quot;1&quot;&#39;</span><span class="p">)</span>
+<span class="go">{u&#39;a&#39;: u&#39;1&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;pgsql&#39;</span><span class="p">,</span> <span class="s">&#39;mysql&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">,</span> <span class="s">&#39;php&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;gevent&#39;</span><span class="p">,</span> <span class="s">&#39;nodejs&#39;</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loads</span><span class="p">(</span><span class="n">dumps</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="n">return_type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+<span class="go">[(u&#39;pgsql&#39;, u&#39;mysql&#39;), (u&#39;python&#39;, u&#39;php&#39;), (u&#39;gevent&#39;, u&#39;nodejs&#39;)]</span>
+</pre></div>
+</div>
+<p>You can easily install the package from <a class="reference external" href="http://pypi.python.org/pypi/pghstore">PyPI</a> by using <strong class="program">pip</strong> or
+<strong class="program">easy_install</strong>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pip install pghstore
+</pre></div>
+</div>
+<dl class="function">
+<dt id="pghstore.dump">
+<tt class="descclassname">pghstore.</tt><tt class="descname">dump</tt><big>(</big><em>obj</em>, <em>file</em>, <em>key_map=None</em>, <em>value_map=None</em>, <em>encoding='utf-8'</em><big>)</big><a class="headerlink" href="#pghstore.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#pghstore.dumps" title="pghstore.dumps"><tt class="xref py py-func docutils literal"><span class="pre">dumps()</span></tt></a> except it writes the result into the passed
+<tt class="docutils literal"><span class="pre">file</span></tt> object instead of returning it.</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">StringIO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dump</span><span class="p">({</span><span class="s">u&#39;a&#39;</span><span class="p">:</span> <span class="s">u&#39;1&#39;</span><span class="p">},</span> <span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+<span class="go">&#39;&quot;a&quot;=&gt;&quot;1&quot;&#39;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>obj</strong> &#8211; a mapping object to dump</li>
+<li><strong>file</strong> &#8211; a file object to write into</li>
+<li><strong>key_map</strong> &#8211; an optional mapping function that takes a non-string key
+and returns a mapped string key</li>
+<li><strong>value_map</strong> &#8211; an optional mapping function that takes a non-string
+value and returns a mapped string value</li>
+<li><strong>encoding</strong> &#8211; a string encode to use</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pghstore.dumps">
+<tt class="descclassname">pghstore.</tt><tt class="descname">dumps</tt><big>(</big><em>obj</em>, <em>key_map=None</em>, <em>value_map=None</em>, <em>encoding='utf-8'</em>, <em>return_unicode=False</em><big>)</big><a class="headerlink" href="#pghstore.dumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a mapping object as PostgreSQL <tt class="docutils literal"><span class="pre">hstore</span></tt> format.</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">({</span><span class="s">u&#39;a&#39;</span><span class="p">:</span> <span class="s">u&#39;1 &quot;quotes&quot;&#39;</span><span class="p">})</span>
+<span class="go">&#39;&quot;a&quot;=&gt;&quot;1 \\&quot;quotes\\&quot;&quot;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">([(</span><span class="s">&#39;key&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="s">&#39;v&#39;</span><span class="p">)])</span>
+<span class="go">&#39;&quot;key&quot;=&gt;&quot;value&quot;,&quot;k&quot;=&gt;&quot;v&quot;&#39;</span>
+</pre></div>
+</div>
+<p>It accepts only strings as keys and values except <tt class="docutils literal"><span class="pre">None</span></tt> for values.
+Otherwise it will raise <tt class="xref py py-exc docutils literal"><span class="pre">TypeError</span></tt>:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">({</span><span class="s">&#39;null&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">})</span>
+<span class="go">&#39;&quot;null&quot;=&gt;NULL&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">([(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">value 1 of key &#39;a&#39; is not a string</span>
+</pre></div>
+</div>
+<p>Or you can pass <tt class="docutils literal"><span class="pre">key_map</span></tt> and <tt class="docutils literal"><span class="pre">value_map</span></tt> parameters to workaround
+this:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">([(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> <span class="n">value_map</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="go">&#39;&quot;a&quot;=&gt;&quot;1&quot;,&quot;b&quot;=&gt;&quot;2&quot;&#39;</span>
+</pre></div>
+</div>
+<p>By applying these options, you can store any other Python objects
+than strings into <tt class="docutils literal"><span class="pre">hstore</span></tt> values:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="kn">import</span> <span class="nn">json</span>
+<span class="gp">... </span><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="kn">import</span> <span class="nn">simplejson</span> <span class="kn">as</span> <span class="nn">json</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">([(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> <span class="n">value_map</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
+<span class="go">&#39;&quot;a&quot;=&gt;&quot;[0, 1, 2]&quot;,&quot;b&quot;=&gt;&quot;2&quot;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">([(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span>
+<span class="gp">... </span>      <span class="n">value_map</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>  
+<span class="go">&#39;&quot;a&quot;=&gt;&quot;...&quot;,&quot;b&quot;=&gt;&quot;...&quot;&#39;</span>
+</pre></div>
+</div>
+<p>It returns a UTF-8 encoded string, but you can change the <tt class="docutils literal"><span class="pre">encoding</span></tt>:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">({</span><span class="s">&#39;surname&#39;</span><span class="p">:</span> <span class="s">u&#39;</span><span class="se">\ud64d</span><span class="s">&#39;</span><span class="p">})</span>
+<span class="go">&#39;&quot;surname&quot;=&gt;&quot;\xed\x99\x8d&quot;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">({</span><span class="s">&#39;surname&#39;</span><span class="p">:</span> <span class="s">u&#39;</span><span class="se">\ud64d</span><span class="s">&#39;</span><span class="p">},</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-32&#39;</span><span class="p">)</span>
+<span class="go">&#39;&quot;surname&quot;=&gt;&quot;\xff\xfe\x00\x00M\xd6\x00\x00&quot;&#39;</span>
+</pre></div>
+</div>
+<p>If you set <tt class="docutils literal"><span class="pre">return_unicode</span></tt> to <tt class="docutils literal"><span class="pre">True</span></tt>, it will return <tt class="xref py py-class docutils literal"><span class="pre">unicode</span></tt>
+instead of <tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> (byte string):</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dumps</span><span class="p">({</span><span class="s">&#39;surname&#39;</span><span class="p">:</span> <span class="s">u&#39;</span><span class="se">\ud64d</span><span class="s">&#39;</span><span class="p">},</span> <span class="n">return_unicode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">u&#39;&quot;surname&quot;=&gt;&quot;\ud64d&quot;&#39;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> &#8211; a mapping object to dump</li>
+<li><strong>key_map</strong> &#8211; an optional mapping function that takes a non-string key
+and returns a mapped string key</li>
+<li><strong>value_map</strong> &#8211; an optional mapping function that takes a non-string
+value and returns a mapped string value</li>
+<li><strong>encoding</strong> &#8211; a string encode to use</li>
+<li><strong>return_unicode</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt>) &#8211; returns an <tt class="xref py py-class docutils literal"><span class="pre">unicode</span></tt> string instead
+byte <tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>.  <tt class="docutils literal"><span class="pre">False</span></tt> by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a <tt class="docutils literal"><span class="pre">hstore</span></tt> data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pghstore.load">
+<tt class="descclassname">pghstore.</tt><tt class="descname">load</tt><big>(</big><em>file</em>, <em>encoding='utf-8'</em><big>)</big><a class="headerlink" href="#pghstore.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#pghstore.loads" title="pghstore.loads"><tt class="xref py py-func docutils literal"><span class="pre">loads()</span></tt></a> except it reads the passed <tt class="docutils literal"><span class="pre">file</span></tt> object
+instead of a string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pghstore.loads">
+<tt class="descclassname">pghstore.</tt><tt class="descname">loads</tt><big>(</big><em>string</em>, <em>encoding='utf-8'</em>, <em>return_type=&lt;type 'dict'&gt;</em><big>)</big><a class="headerlink" href="#pghstore.loads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the passed hstore format <tt class="docutils literal"><span class="pre">string</span></tt> to a Python mapping object.</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">loads</span><span class="p">(</span><span class="s">&#39;a=&gt;1&#39;</span><span class="p">)</span>
+<span class="go">{u&#39;a&#39;: u&#39;1&#39;}</span>
+</pre></div>
+</div>
+<p>If you want to load a hstore value as any other type than <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>
+set <tt class="docutils literal"><span class="pre">return_type</span></tt> parameter.  Note that the constructor has to take
+an iterable object.</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">loads</span><span class="p">(</span><span class="s">&#39;a=&gt;1, b=&gt;2&#39;</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+<span class="go">[(u&#39;a&#39;, u&#39;1&#39;), (u&#39;b&#39;, u&#39;2&#39;)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loads</span><span class="p">(</span><span class="s">&#39;&quot;return_type&quot;=&gt;&quot;tuple&quot;&#39;</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="nb">tuple</span><span class="p">)</span>
+<span class="go">((u&#39;return_type&#39;, u&#39;tuple&#39;),)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>string</strong> (<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) &#8211; a hstore format string</li>
+<li><strong>encoding</strong> &#8211; an encoding of the passed <tt class="docutils literal"><span class="pre">string</span></tt>.  if the <tt class="docutils literal"><span class="pre">string</span></tt>
+is an <tt class="xref py py-class docutils literal"><span class="pre">unicode</span></tt> string, this parameter will be
+ignored</li>
+<li><strong>return_type</strong> &#8211; a map type of return value.  default is <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a parsed map.  its type is decided by <tt class="docutils literal"><span class="pre">return_type</span></tt> parameter</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-pghstore.version"></span><div class="section" id="pghstore-version-version-data">
+<h1><a class="reference internal" href="#module-pghstore.version" title="pghstore.version"><tt class="xref py py-mod docutils literal"><span class="pre">pghstore.version</span></tt></a> &#8212; Version data<a class="headerlink" href="#pghstore-version-version-data" title="Permalink to this headline">¶</a></h1>
+<p>You can find the current version in the command line interface:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> python -m wand.version
+<span class="go">1.0.0</span>
+</pre></div>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 1.0.0.</span></p>
+<dl class="data">
+<dt id="pghstore.version.VERSION">
+<tt class="descclassname">pghstore.version.</tt><tt class="descname">VERSION</tt><em class="property"> = '1.0.0'</em><a class="headerlink" href="#pghstore.version.VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">basestring</span></tt>) The version string e.g. <tt class="docutils literal"><span class="pre">'0.9.2'</span></tt>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="pghstore.version.VERSION_INFO">
+<tt class="descclassname">pghstore.version.</tt><tt class="descname">VERSION_INFO</tt><em class="property"> = (1, 0, 0)</em><a class="headerlink" href="#pghstore.version.VERSION_INFO" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) The version tuple e.g. <tt class="docutils literal"><span class="pre">(0,</span> <span class="pre">9,</span> <span class="pre">2)</span></tt>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="open-source">
+<h1>Open source<a class="headerlink" href="#open-source" title="Permalink to this headline">¶</a></h1>
+<p>This module is initially written by <a class="reference external" href="http://dahlia.kr/">Hong Minhee</a>
+(<tt class="xref py py-mod docutils literal"><span class="pre">pghstore._native</span></tt> &#8212; original Python version) and
+<a class="reference external" href="http://github.com/kajic">Robert Kajic</a> (<tt class="xref py py-mod docutils literal"><span class="pre">pghstore._speedups</span></tt> &#8212;
+optimized C version).</p>
+<p>Distributed under <a class="reference external" href="http://minhee.mit-license.org/">MIT License</a>.</p>
+<p>You can find the source code from the <a class="reference external" href="https://github.com/dahlia/pghstore">GitHub repository</a>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> git clone git://github.com/dahlia/pghstore.git
+</pre></div>
+</div>
+<p>To report bugs or request features use the <a class="reference external" href="https://github.com/dahlia/pghstore/issues">issue tracker</a>.</p>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">pghstore 1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Hong Minhee.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
