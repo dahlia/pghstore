@@ -26,4 +26,7 @@ You can find the source code from the `GitHub repository
 To report bugs or request features use the `issue tracker
 <https://github.com/dahlia/pghstore/issues>`_.
 
+.. image:: https://secure.travis-ci.org/dahlia/pghstore.png?branch=master
+   :alt: Build Status
+   :target: http://travis-ci.org/dahlia/pghstore
 
