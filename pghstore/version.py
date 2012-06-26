@@ -19,7 +19,7 @@ __all__ = 'VERSION', 'VERSION_INFO'
 VERSION_INFO = (1, 0, 0)
 
 #: (:class:`basestring`) The version string e.g. ``'0.9.2'``.
-VERSION = '{0}.{1}.{2}'.format(*VERSION_INFO)
+VERSION = '%d.%d.%d' % VERSION_INFO
 
 __doc__ = __doc__.replace('0.9.2', VERSION)
 
