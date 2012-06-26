@@ -1,6 +1,10 @@
 pghstore
 ========
 
+.. image:: https://secure.travis-ci.org/dahlia/pghstore.png?branch=master
+   :alt: Build Status
+   :target: http://travis-ci.org/dahlia/pghstore
+
 This small module implements a formatter and a loader for hstore_,
 one of PostgreSQL_ supplied modules, that stores simple key-value pairs.
 ::
